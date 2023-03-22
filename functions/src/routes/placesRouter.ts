@@ -5,6 +5,8 @@ import axios from "axios";
 
 const baseURL: string =
   "https://maps.googleapis.com/maps/api/place/textsearch/json";
+const baseURL2: string =
+  "https://maps.googleapis.com/maps/api/place/details/json";
 const key: string = functions.config().google.key;
 const placesRouter = express.Router();
 
@@ -12,6 +14,7 @@ const errorResponse = (error: any, res: any) => {
   console.error("FAIL", error);
   res.status(500).json({ message: "Internal Server Error" });
 };
+
 placesRouter.get("/farms", async (req, res) => {
   try {
     const location: string = req.query.location as string;
@@ -25,4 +28,18 @@ placesRouter.get("/farms", async (req, res) => {
     errorResponse(err, res);
   }
 });
+placesRouter.get("/farms/details", async (req, res) => {
+  try {
+    const place_id: string = req.query.place_id as string;
+    const farms: Farm[] = (
+      await axios.get(baseURL2, {
+        params: { place_id, key: key },
+      })
+    ).data;
+    res.status(200).json(farms);
+  } catch (err) {
+    errorResponse(err, res);
+  }
+});
+
 export default placesRouter;
