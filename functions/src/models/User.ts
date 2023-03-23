@@ -10,4 +10,3 @@ export default interface User {
 }
 
 // google has a free geo location api// geo forwarding api
-//
