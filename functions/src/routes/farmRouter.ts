@@ -1,6 +1,7 @@
 import express = require("express");
 import { getClient } from "../db";
 import Farm from "../models/Farm";
+import MongoFarm from "../models/MongoFarm";
 
 const farmRouter = express.Router();
 
@@ -24,13 +25,29 @@ farmRouter.get("/users/:place_id/farms", async (req, res) => {
   }
 });
 
-farmRouter.post("/users/:place_id/farms", async (req, res) => {
+farmRouter.get("/users/farms", async (req, res) => {
   try {
-    const newFarm: Farm = req.body as Farm;
-    const place_id = req.params.place_id;
-    newFarm.place_id = place_id;
+    const location = req.query.location as string;
+    console.log(location);
     const client = await getClient();
-    await client.db().collection<Farm>("farms").insertOne(newFarm);
+    const results = await client
+      .db()
+      .collection<MongoFarm>("farms")
+      .find({ formatted_address: new RegExp(location, "i") })
+      .toArray();
+    res.status(200).json(results);
+  } catch (err) {
+    errorResponse(err, res);
+  }
+});
+
+farmRouter.post("/users/farms/:farmer_id", async (req, res) => {
+  try {
+    const newFarm: MongoFarm = req.body as MongoFarm;
+    const farmer_id = req.params.farmer_id;
+    newFarm.farmer_id = farmer_id;
+    const client = await getClient();
+    await client.db().collection<MongoFarm>("farms").insertOne(newFarm);
     res.status(201).json(newFarm);
   } catch (err) {
     errorResponse(err, res);
