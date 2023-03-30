@@ -72,7 +72,9 @@ farmRouter.delete("/users/:place_id/farms/:id", async (req, res) => {
     } else {
       res.status(404).json({ message: "Not found" });
     }
-  } catch {}
+  } catch (err) {
+    errorResponse(err, res);
+  }
 });
 
 export default farmRouter;

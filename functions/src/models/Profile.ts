@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 export default interface Profile {
   isFarmer: boolean;
-  profile_id: string;
+  google_id: string;
   _id?: ObjectId;
   fullName: string;
   email: string;

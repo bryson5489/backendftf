@@ -4,5 +4,5 @@ import Farm from "./Farm";
 export default interface Favorite {
   _id?: ObjectId;
   farm: Farm;
-  profile_id?: string;
+  profile_id?: ObjectId;
 }
