@@ -28,12 +28,16 @@ farmRouter.get("/users/:place_id/farms", async (req, res) => {
 farmRouter.get("/users/farms", async (req, res) => {
   try {
     const location = req.query.location as string;
-    console.log(location);
     const client = await getClient();
     const results = await client
       .db()
       .collection<MongoFarm>("farms")
-      .find({ formatted_address: new RegExp(location, "i") })
+      .find({
+        $or: [
+          { formatted_address: new RegExp(location, "i") },
+          { name: new RegExp(location, "i") },
+        ],
+      })
       .toArray();
     res.status(200).json(results);
   } catch (err) {
